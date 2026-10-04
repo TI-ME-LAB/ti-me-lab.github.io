@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Protein Control - Post-Punk Protein Music</title>
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: #000;
+    }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState } = React;
+
+    const ProteinControl = () => {
+      const [isPlaying, setIsPlaying] = useState(false);
+      const [currentSection, setCurrentSection] = useState('');
+      const [currentBar, setCurrentBar] = useState(0);
+      const [audioContext, setAudioContext] = useState(null);
+      const [oscillators, setOscillators] = useState([]);
+      const [intervalId, setIntervalId] = useState(null);
+
+      const proteinSequence = "MSIKLNLKDNNIEFVTGRGGGLRFKPKELNKLFGVHPPQSPYLASLRNLDYSDKQTLKEVLTMGADVRLHYEIADGFSRGVTYNSNEIILEYFQSDFSLPFLEEAIKSIGNLSFADLVGFTGTHLGFLSQVKNLPKNIQIIGIQAPNYAFMTLADTRVLNHGIYIDETIVAKNRMFESYQEGLPVTLQWKQVNSDKQRYLLSEREEISDLLHGTVAIEMLLKGKPLEIIADVSEVIDTRTKEQFAQLYNKLRPLKPWSHLKHLPVHDQSAPTVLSLPSKLIGELISVVQVPQDWTTWFDQLLFKRVIPLTGELQVTNRNTAIVRMKAIEPELKFYRRQVTEEEVKSEHGLFVPQTGRCYFPGEVEALGFYQHSAEDLVVKLTLTPSNPQTDIHDLLKDTVEAGRLAFDVAQQKNGLTLVNAIKKEKQNSLGTDDIESFKVPVFDSTESRMMVPGKSITAILEQVYGGQPLGDKVVQLVGDHITNGTKPHILKKIKITTKDIEAKLKEQLDLLKDQLKNPFIQHGHILMFDRNTGWQSLTVSDEGQRVLGVKPQVQVSQEMVFDALKSSADLSKKLHRDANQQGPRFVMHSIKVSPKHVGHEVVTFNIPDYVRQYNADVNGYNMKFVEGIHVEYLPGDVVGVMDADQTNLYEVNRKTLELREGTDPEQDLEQIRDGITRIEVPEVEKTLKQMKEISDLEKEVDYDTPLVVLDIIMDDTVVAEVDKIVHVPEFAVQNSFFGKNLSYQNFKDMVKKRQ";
+
+      const analyzeProtein = () => {
+        const aaFreqs = {};
+        proteinSequence.split('').forEach(aa => {
+          aaFreqs[aa] = (aaFreqs[aa] || 0) + 1;
+        });
+        
+        const sorted = Object.entries(aaFreqs).sort((a, b) => b[1] - a[1]);
+        return {
+          bassTheme: sorted[0][0],
+          guitarTheme: sorted[1][0],
+          leadTheme: sorted[2][0],
+          padTheme: sorted[3][0]
+        };
+      };
+
+      const themes = analyzeProtein();
+
+      const noteMap = {
+        'L': 110, 'E': 123.47, 'K': 130.81, 'I': 146.83, 'V': 164.81,
+        'D': 174.61, 'A': 185, 'G': 196, 'T': 207.65, 'S': 220,
+        'R': 233.08, 'N': 246.94, 'Q': 261.63, 'F': 277.18, 'Y': 293.66,
+        'P': 311.13, 'H': 329.63, 'M': 349.23, 'C': 369.99, 'W': 392
+      };
+
+      const songStructure = [
+        { name: 'INTRO', bars: 4, drums: 'minimal', fadeIn: true },
+        { name: 'VERSE', bars: 8, drums: 'steady' },
+        { name: 'CHORUS', bars: 8, drums: 'full' },
+        { name: 'VERSE', bars: 8, drums: 'steady', variation: true },
+        { name: 'BREAKDOWN', bars: 4, drums: 'breakdown' },
+        { name: 'VERSE', bars: 8, drums: 'steady' },
+        { name: 'CHORUS', bars: 8, drums: 'full', intense: true },
+        { name: 'OUTRO', bars: 6, drums: 'decay', fadeOut: true }
+      ];
+
+      const startMusic = () => {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        setAudioContext(ctx);
+        setIsPlaying(true);
+        setCurrentBar(0);
+
+        let barIndex = 0;
+        let structureIndex = 0;
+        let barInSection = 0;
+        
+        const bpm = 132;
+        const barDuration = (60 / bpm) * 4 * 1000;
+
+        const id = setInterval(() => {
+          if (structureIndex >= songStructure.length) {
+            stopMusic();
+            return;
+          }
+
+          const section = songStructure[structureIndex];
+          setCurrentSection(section.name);
+          setCurrentBar(barIndex);
+
+          playBar(ctx, section, barInSection);
+
+          barInSection++;
+          barIndex++;
+
+          if (barInSection >= section.bars) {
+            barInSection = 0;
+            structureIndex++;
+          }
+        }, barDuration);
+
+        setIntervalId(id);
+      };
+
+      const playBar = (ctx, section, barInSection) => {
+        const oscs = [];
+        const now = ctx.currentTime;
+        const beatDuration = 60 / 132;
+
+        let fadeInFactor = 1;
+        let fadeOutFactor = 1;
+        
+        if (section.fadeIn) {
+          fadeInFactor = Math.min(1, (barInSection + 1) / section.bars);
+        }
+        
+        if (section.fadeOut) {
+          fadeOutFactor = Math.max(0.1, 1 - (barInSection / section.bars));
+        }
+
+        // Bass
+        const bassPattern = [0, 0.5, 1, 1.5, 2, 2.5, 3, 3.5];
+        bassPattern.forEach((beat) => {
+          if (section.drums !== 'minimal' || barInSection > 1) {
+            const bassFreq = noteMap[themes.bassTheme] / 2;
+            
+            const bassGain = ctx.createGain();
+            bassGain.connect(ctx.destination);
+            let intensity = 0.14 * fadeInFactor * fadeOutFactor;
+            
+            bassGain.gain.setValueAtTime(intensity, now + beat * beatDuration);
+            bassGain.gain.exponentialRampToValueAtTime(0.01, now + beat * beatDuration + 0.3);
+
+            const bassDistortion = ctx.createWaveShaper();
+            bassDistortion.curve = makeDistortionCurve(40);
+            
+            const bassOsc = ctx.createOscillator();
+            bassOsc.type = 'sawtooth';
+            bassOsc.frequency.setValueAtTime(bassFreq, now + beat * beatDuration);
+            bassOsc.connect(bassDistortion);
+            bassDistortion.connect(bassGain);
+            bassOsc.start(now + beat * beatDuration);
+            bassOsc.stop(now + beat * beatDuration + 0.3);
+            oscs.push(bassOsc);
+          }
+        });
+
+        // Guitar
+        if (section.name !== 'INTRO' && section.name !== 'BREAKDOWN') {
+          const guitarBeats = [0];
+          
+          guitarBeats.forEach(beat => {
+            const guitarFreq = noteMap[themes.guitarTheme];
+            
+            const guitarGain = ctx.createGain();
+            guitarGain.connect(ctx.destination);
+            let volume = 0.025 * fadeInFactor * fadeOutFactor;
+            
+            guitarGain.gain.setValueAtTime(volume, now + beat * beatDuration);
+            guitarGain.gain.exponentialRampToValueAtTime(0.001, now + beat * beatDuration + 1);
+
+            const chorusDelay1 = ctx.createDelay();
+            chorusDelay1.delayTime.value = 0.02;
+            const chorusGain = ctx.createGain();
+            chorusGain.gain.value = 0.25;
+
+            const guitarFilter = ctx.createBiquadFilter();
+            guitarFilter.type = 'lowpass';
+            guitarFilter.frequency.value = 900;
+            guitarFilter.Q.value = 1;
+            
+            const guitarOsc = ctx.createOscillator();
+            guitarOsc.type = 'sine';
+            guitarOsc.frequency.setValueAtTime(guitarFreq, now + beat * beatDuration);
+            guitarOsc.connect(guitarFilter);
+            guitarFilter.connect(guitarGain);
+            guitarFilter.connect(chorusDelay1);
+            chorusDelay1.connect(chorusGain);
+            chorusGain.connect(ctx.destination);
+            guitarOsc.start(now + beat * beatDuration);
+            guitarOsc.stop(now + beat * beatDuration + 1);
+            oscs.push(guitarOsc);
+          });
+        }
+
+        // Synth Pad
+        if (section.name !== 'INTRO' || barInSection > 1) {
+          const padGain = ctx.createGain();
+          padGain.connect(ctx.destination);
+          let padVolume = section.name === 'BREAKDOWN' ? 0.07 : 0.045;
+          padVolume = padVolume * fadeInFactor * fadeOutFactor;
+          
+          padGain.gain.setValueAtTime(0, now);
+          padGain.gain.linearRampToValueAtTime(padVolume, now + 0.5);
+
+          const padFilter = ctx.createBiquadFilter();
+          padFilter.type = 'lowpass';
+          const filterFreq = section.fadeOut ? Math.max(150, 300 - barInSection * 30) : 300;
+          padFilter.frequency.value = filterFreq;
+          padFilter.Q.value = 2.5;
+          
+          [0.996, 1.004].forEach(detune => {
+            const padOsc = ctx.createOscillator();
+            padOsc.type = 'sawtooth';
+            padOsc.frequency.setValueAtTime(noteMap[themes.padTheme] * detune, now);
+            padOsc.connect(padFilter);
+            padOsc.start(now);
+            padOsc.stop(now + beatDuration * 4);
+            oscs.push(padOsc);
+          });
+          
+          padFilter.connect(padGain);
+        }
+
+        // Drums
+        if (section.drums !== 'minimal') {
+          const drumsActive = !section.fadeIn || barInSection > 3;
+          
+          if (drumsActive) {
+            const kickPattern = section.drums === 'breakdown' ? [0, 1.5, 3] : [0, 1, 2, 3];
+            kickPattern.forEach(beat => {
+              const kickGain = ctx.createGain();
+              kickGain.connect(ctx.destination);
+              let kickVolume = 0.18 * fadeOutFactor;
+              
+              kickGain.gain.setValueAtTime(kickVolume, now + beat * beatDuration);
+              kickGain.gain.exponentialRampToValueAtTime(0.01, now + beat * beatDuration + 0.3);
+
+              const kickOsc = ctx.createOscillator();
+              kickOsc.type = 'sine';
+              kickOsc.frequency.setValueAtTime(100, now + beat * beatDuration);
+              kickOsc.frequency.exponentialRampToValueAtTime(40, now + beat * beatDuration + 0.3);
+              kickOsc.connect(kickGain);
+              kickOsc.start(now + beat * beatDuration);
+              kickOsc.stop(now + beat * beatDuration + 0.3);
+              oscs.push(kickOsc);
+            });
+
+            [1, 3].forEach(beat => {
+              const snareGain = ctx.createGain();
+              snareGain.connect(ctx.destination);
+              let snareVolume = 0.12 * fadeOutFactor;
+              
+              snareGain.gain.setValueAtTime(snareVolume, now + beat * beatDuration);
+              snareGain.gain.exponentialRampToValueAtTime(0.01, now + beat * beatDuration + 0.15);
+
+              const snareOsc = ctx.createOscillator();
+              snareOsc.type = 'triangle';
+              snareOsc.frequency.setValueAtTime(180, now + beat * beatDuration);
+              snareOsc.connect(snareGain);
+              snareOsc.start(now + beat * beatDuration);
+              snareOsc.stop(now + beat * beatDuration + 0.15);
+              oscs.push(snareOsc);
+            });
+
+            if (section.drums === 'full' || section.drums === 'building') {
+              const hihatPattern = 2;
+              for (let i = 0; i < hihatPattern; i++) {
+                const timing = now + (i * beatDuration * 4 / hihatPattern);
+                const hihatGain = ctx.createGain();
+                hihatGain.connect(ctx.destination);
+                let hihatVolume = 0.015 * fadeOutFactor;
+                
+                hihatGain.gain.setValueAtTime(hihatVolume, timing);
+                hihatGain.gain.exponentialRampToValueAtTime(0.001, timing + 0.05);
+
+                const bufferSize = ctx.sampleRate * 0.05;
+                const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+                const data = buffer.getChannelData(0);
+                for (let j = 0; j < bufferSize; j++) {
+                  data[j] = Math.random() * 2 - 1;
+                }
+
+                const hihatFilter = ctx.createBiquadFilter();
+                hihatFilter.type = 'highpass';
+                hihatFilter.frequency.value = 10000;
+
+                const noise = ctx.createBufferSource();
+                noise.buffer = buffer;
+                noise.connect(hihatFilter);
+                hihatFilter.connect(hihatGain);
+                noise.start(timing);
+                oscs.push(noise);
+              }
+            }
+          }
+        }
+
+        setOscillators(oscs);
+      };
+
+      const makeDistortionCurve = (amount) => {
+        const samples = 44100;
+        const curve = new Float32Array(samples);
+        const deg = Math.PI / 180;
+        for (let i = 0; i < samples; i++) {
+          const x = (i * 2) / samples - 1;
+          curve[i] = ((3 + amount) * x * 20 * deg) / (Math.PI + amount * Math.abs(x));
+        }
+        return curve;
+      };
+
+      const stopMusic = () => {
+        if (intervalId) {
+          clearInterval(intervalId);
+          setIntervalId(null);
+        }
+        oscillators.forEach(osc => {
+          try { osc.stop(); } catch (e) {}
+        });
+        if (audioContext) {
+          audioContext.close();
+          setAudioContext(null);
+        }
+        setIsPlaying(false);
+        setOscillators([]);
+        setCurrentSection('');
+        setCurrentBar(0);
+      };
+
+      const reset = () => {
+        stopMusic();
+      };
+
+      const totalBars = songStructure.reduce((sum, s) => sum + s.bars, 0);
+
+      return (
+        <div className="w-full min-h-screen bg-black text-white p-6 overflow-auto">
+          <div className="max-w-6xl mx-auto">
+            <div className="text-center mb-8">
+              <h1 className="text-5xl font-bold mb-2" style={{fontFamily: 'Courier New, monospace', letterSpacing: '0.1em'}}>
+                <span className="text-gray-500">PROTEIN</span>
+                <span className="text-white"> CONTROL</span>
+              </h1>
+              <p className="text-gray-500 tracking-wide text-sm">E. COLI RNA POLYMERASE</p>
+              <p className="text-gray-600 text-xs mt-1 italic">when molecular regulation fails</p>
+            </div>
+
+            <div className="bg-gray-900 border border-gray-700 p-6 mb-6">
+              <div className="flex gap-4 mb-6 justify-center">
+                <button
+                  onClick={isPlaying ? stopMusic : startMusic}
+                  className="bg-gray-700 hover:bg-gray-600 px-8 py-3 font-bold flex items-center gap-2 border border-gray-500"
+                  style={{fontFamily: 'Courier New, monospace'}}
+                >
+                  {isPlaying ? 'STOP' : 'PLAY'}
+                </button>
+                <button
+                  onClick={reset}
+                  className="bg-gray-800 hover:bg-gray-700 px-8 py-3 font-bold flex items-center gap-2 border border-gray-600"
+                  style={{fontFamily: 'Courier New, monospace'}}
+                >
+                  RESET
+                </button>
+              </div>
+
+              {isPlaying && (
+                <div className="mb-4 text-center">
+                  <div className="text-2xl font-bold mb-2 text-gray-300" style={{fontFamily: 'Courier New, monospace'}}>
+                    {currentSection}
+                  </div>
+                  <div className="text-sm text-gray-500 font-mono mb-3">
+                    BAR {currentBar + 1} / {totalBars}
+                  </div>
+                  <div className="w-full bg-gray-800 h-2 rounded-full overflow-hidden mb-2">
+                    <div 
+                      className="bg-gradient-to-r from-gray-600 via-gray-400 to-gray-600 h-full transition-all duration-1000"
+                      style={{width: `${((currentBar + 1) / totalBars) * 100}%`}}
+                    />
+                  </div>
+                  <div className="text-xs text-gray-600 font-mono">
+                    {Math.round(((currentBar + 1) / totalBars) * 100)}% complete
+                  </div>
+                </div>
+              )}
+
+              <div className="bg-black p-4 border border-gray-800">
+                <div className="text-sm font-bold mb-2 text-gray-400" style={{fontFamily: 'Courier New, monospace'}}>
+                  MUSICAL THEMES:
+                </div>
+                <div className="font-mono text-xs space-y-1 text-gray-500">
+                  <div>BASS: <span className="text-gray-300">{themes.bassTheme}</span> at {Math.round(noteMap[themes.bassTheme] / 2)}Hz</div>
+                  <div>GUITAR: <span className="text-gray-300">{themes.guitarTheme}</span> at {Math.round(noteMap[themes.guitarTheme])}Hz</div>
+                  <div>SYNTH PAD: <span className="text-gray-300">{themes.padTheme}</span> at {Math.round(noteMap[themes.padTheme])}Hz</div>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-gray-900 p-4 border border-gray-700 text-sm text-gray-400">
+              <p className="mb-2"><strong className="text-white" style={{fontFamily: 'Courier New, monospace'}}>COMPOSITION:</strong></p>
+              <ul className="list-none space-y-1 ml-2 font-mono text-xs">
+                <li>→ TEMPO: 132 BPM (fast, urgent, relentless)</li>
+                <li>→ BASS: Fast 8th notes, synth-like, driving</li>
+                <li>→ GUITAR: Minimal, cold texture</li>
+                <li>→ SYNTH: Dark, oppressive pads with tension</li>
+                <li>→ DRUMS: Steady, mechanical</li>
+                <li>→ STYLE: Post-punk inspired by "She's Lost Control"</li>
+              </ul>
+              <p className="mt-3 text-xs">The protein drives a relentless, anxious rhythm. Fast, mechanical, with no escape - biology meets loss of control. 🧬⚡</p>
+            </div>
+          </div>
+        </div>
+      );
+    };
+
+    ReactDOM.render(<ProteinControl />, document.getElementById('root'));
+  </script>
+</body>
+</html>

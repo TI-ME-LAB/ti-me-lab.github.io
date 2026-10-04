@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Translation-Informed Microbial Ecology</title>
+<meta name="description" content="Kankan Zhao — Translation-Informed Microbial Ecology">
+<script src="support.js"></script>
+
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="preload" href="assets/fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin="">
+  <link rel="preload" href="assets/fonts/spectral-400.woff2" as="font" type="font/woff2" crossorigin="">
+  <style>
+  @font-face{font-family:'Inter';font-style:normal;font-weight:400 600;font-display:swap;src:url(assets/fonts/inter-latin.woff2) format('woff2');unicode-range:U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;}
+  @font-face{font-family:'Spectral';font-style:normal;font-weight:400;font-display:swap;src:url(assets/fonts/spectral-400.woff2) format('woff2');unicode-range:U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;}
+  @font-face{font-family:'Spectral';font-style:normal;font-weight:500;font-display:swap;src:url(assets/fonts/spectral-500.woff2) format('woff2');unicode-range:U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;}
+  @font-face{font-family:'Spectral';font-style:normal;font-weight:600;font-display:swap;src:url(assets/fonts/spectral-600.woff2) format('woff2');unicode-range:U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;}
+  @font-face{font-family:'Noto Serif SC';font-style:normal;font-weight:400;font-display:swap;src:url(assets/fonts/noto-serif-sc-a.woff2) format('woff2');unicode-range:U+4F83;}
+  @font-face{font-family:'Noto Serif SC';font-style:normal;font-weight:400;font-display:swap;src:url(assets/fonts/noto-serif-sc-b.woff2) format('woff2');unicode-range:U+8D75;}
+  </style>
+  
+  <style>
+    html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+    body { margin: 0; background: #211f1d; font-family: 'Inter',sans-serif; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; font-synthesis: none; }
+    a { color: #f2f0eb; text-decoration: none; }
+    a:hover { color: #ffffff; text-decoration: underline; }
+    select { font-family: 'Inter',sans-serif; font-size: 13px; }
+  </style>
+</helmet>
+
+<div style="min-height:100vh; background:#211f1d; color:#f2f0eb; font-family:'Inter',sans-serif;">
+
+  <nav style="position:sticky; top:0; z-index:20; background:#211f1d; border-bottom:1px solid #322f2b; display:flex; align-items:center; justify-content:space-between; padding:12px clamp(20px,5vw,48px); min-height:72px; flex-wrap:wrap; gap:12px 32px;">
+    <div sc-camel-on-click="{{ goHome }}" style="display:flex; align-items:center; gap:10px; font-family:'Spectral','Noto Serif SC',serif; font-size:20px; letter-spacing:0.3px; cursor:pointer; color:#f2f0eb;">
+      <svg width="24" height="24" sc-camel-view-box="0 0 32 32" style="flex-shrink:0;">
+        <g stroke="#dc9a5c" stroke-width="1.1" opacity="0.7">
+          <line x1="16" y1="16" x2="27" y2="10"></line>
+          <line x1="16" y1="16" x2="6" y2="24"></line>
+          <line x1="16" y1="16" x2="26" y2="25"></line>
+          <line x1="16" y1="16" x2="4" y2="11"></line>
+          <line x1="16" y1="16" x2="20" y2="28"></line>
+        </g>
+        <circle cx="16" cy="16" r="5" fill="#dc9a5c"></circle>
+        <circle cx="27" cy="10" r="3" fill="#dc9a5c" opacity="0.75"></circle>
+        <circle cx="6" cy="24" r="3.5" fill="#dc9a5c" opacity="0.6"></circle>
+        <circle cx="26" cy="25" r="2.4" fill="#dc9a5c" opacity="0.5"></circle>
+        <circle cx="4" cy="11" r="2" fill="#dc9a5c" opacity="0.55"></circle>
+        <circle cx="20" cy="28" r="1.8" fill="#dc9a5c" opacity="0.5"></circle>
+      </svg>
+      TIME LAB
+    </div>
+    <div style="display:flex; flex-wrap:wrap; gap:10px clamp(16px,3vw,36px);">
+      <a href="#" sc-camel-on-click="{{ navHome }}" style="font-family:'Inter',sans-serif; font-size:12px; letter-spacing:1.5px; text-transform:uppercase; color:{{ homeColor }}; font-weight:500;">Home</a>
+      <a href="#" sc-camel-on-click="{{ navAbout }}" style="font-family:'Inter',sans-serif; font-size:12px; letter-spacing:1.5px; text-transform:uppercase; color:{{ aboutColor }}; font-weight:500;">About</a>
+      <a href="#" sc-camel-on-click="{{ navProjects }}" style="font-family:'Inter',sans-serif; font-size:12px; letter-spacing:1.5px; text-transform:uppercase; color:{{ projectsColor }}; font-weight:500;">Projects</a>
+      <a href="#" sc-camel-on-click="{{ navPublications }}" style="font-family:'Inter',sans-serif; font-size:12px; letter-spacing:1.5px; text-transform:uppercase; color:{{ publicationsColor }}; font-weight:500;">Publications</a>
+      <a href="#" sc-camel-on-click="{{ navPipelines }}" style="font-family:'Inter',sans-serif; font-size:12px; letter-spacing:1.5px; text-transform:uppercase; color:{{ pipelinesColor }}; font-weight:500;">Pipelines</a>
+      <a href="#" sc-camel-on-click="{{ navContact }}" style="font-family:'Inter',sans-serif; font-size:12px; letter-spacing:1.5px; text-transform:uppercase; color:{{ contactColor }}; font-weight:500;">Contact</a>
+    </div>
+  </nav>
+
+  <sc-if value="{{ isHome }}" hint-placeholder-val="{{ true }}">
+    <div style="position:relative; overflow:hidden;">
+      <svg sc-camel-view-box="0 0 640 640" style="position:absolute; top:-40px; right:-60px; width:52vw; max-width:640px; height:auto; opacity:0.7; pointer-events:none;">
+        <g fill="none" stroke="#dc9a5c" stroke-width="1">
+          <path d="M110,90 C170,60 230,140 210,200 C190,260 280,250 320,310" stroke-opacity="0.45"></path>
+          <path d="M320,310 C360,360 320,420 380,460 C430,495 420,540 470,560" stroke-opacity="0.4"></path>
+          <path d="M210,200 C260,190 300,150 360,170 C410,188 440,150 500,160" stroke-opacity="0.3"></path>
+          <path d="M320,310 C380,300 430,330 480,300 C520,278 560,300 590,270" stroke-opacity="0.3"></path>
+          <path d="M110,90 C90,150 140,190 130,250" stroke-opacity="0.25"></path>
+        </g>
+        <g fill="#dc9a5c">
+          <circle cx="110" cy="90" r="5" opacity="0.7"></circle>
+          <circle cx="210" cy="200" r="8" opacity="0.55"></circle>
+          <circle cx="320" cy="310" r="10" opacity="0.6"></circle>
+          <circle cx="380" cy="460" r="6" opacity="0.5"></circle>
+          <circle cx="470" cy="560" r="7" opacity="0.55"></circle>
+          <circle cx="360" cy="170" r="5" opacity="0.4"></circle>
+          <circle cx="500" cy="160" r="4" opacity="0.35"></circle>
+          <circle cx="480" cy="300" r="5" opacity="0.4"></circle>
+          <circle cx="590" cy="270" r="4" opacity="0.35"></circle>
+          <circle cx="130" cy="250" r="4" opacity="0.35"></circle>
+        </g>
+        <g fill="none" stroke="#dc9a5c" stroke-width="1" stroke-opacity="0.15">
+          <circle cx="320" cy="310" r="60"></circle>
+          <circle cx="210" cy="200" r="40"></circle>
+        </g>
+      </svg>
+      <div style="position:relative; max-width:1040px; margin:0 auto; padding:clamp(56px,12vw,120px) clamp(20px,5vw,32px) clamp(56px,10vw,100px);">
+        <div style="display:flex; gap:64px; align-items:center; flex-wrap:wrap;">
+          <div style="flex:1 1 300px; min-width:0;">
+            <h1 style="font-family:'Spectral','Noto Serif SC',serif; font-weight:400; font-size:clamp(30px,6.5vw,46px); line-height:1.12; margin:0 0 20px;"><span style="color:#dc9a5c;">T</span>ranslation-<span style="color:#dc9a5c;">I</span>nformed <span style="color:#dc9a5c;">M</span>icrobial <span style="color:#dc9a5c;">E</span>cology</h1>
+            <p style="font-size:clamp(18px,2.6vw,20px); line-height:1.6; color:#cfcfcf; max-width:640px; margin:0;">Exploring the microbial world from a translational perspective.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ isAbout }}">
+    <div style="max-width:900px; margin:0 auto; padding:clamp(56px,12vw,120px) clamp(20px,5vw,32px) clamp(56px,10vw,100px);">
+      <div style="font-size:12px; letter-spacing:2px; text-transform:uppercase; color:#dc9a5c; margin-bottom:16px;">Bio</div>
+      <h1 style="font-family: 'Spectral','Noto Serif SC',serif; font-weight: 400; font-size: clamp(28px,6vw,38px); margin: 0 0 48px">Kankan Zhao | 赵侃侃</h1>
+
+      <div style="display:flex; gap:48px; align-items:flex-start; flex-wrap:wrap; margin-bottom:72px;">
+        <img src="https://github.com/SysMicro.png" alt="Kankan Zhao" style="width:160px; height:160px; flex-shrink:0; border-radius:50%; object-fit:cover; display:block;">
+        <p style="font-size:17px; line-height:1.8; color:#cfcfcf; margin:0 0 20px; flex:1 1 300px;">My research centers on Translation-Informed Microbial Ecology (TIME). Genomes define what microbes are capable of; translation reveals what they are actually doing. To capture this activity, I apply metaRiboSeq, a community-scale ribosome profiling approach that measures active translation within microbial communities. Using this approach, I investigate how microbes allocate finite ribosomal resources. Across soil, marine, and host-associated ecosystems, communities partition translational investment rather than averaging it, and niche divergence, rather than richness, governs this structure, a pattern I term Translational Resource Partitioning (TRP). The same framework extends to viruses, including the share of translational capacity allocated to prophages. Building on these findings, I aim to harness microbial competition to design targeted interventions for soil health and pathogen displacement.
+          <br><br>
+          Outside the lab, I'm a longtime fan of progressive rock, post-rock, punk, post-punk, and electronic music — a taste that also feeds into my science communication work, where I convert biological data into electronic music.</p>
+      </div>
+
+      <div style="font-size:12px; letter-spacing:2px; text-transform:uppercase; color:#f2f0eb; margin-bottom:8px;">Work Experience</div>
+      <div style="display:flex; gap:32px; padding:28px 0; border-top:1px solid #322f2b; flex-wrap:wrap;">
+        <div style="flex:0 0 160px; font-size:13px; color:#6e6e6e;">Dec. 2023 – present</div>
+        <div style="flex:1 1 260px;">
+          <div style="font-family:'Spectral','Noto Serif SC',serif; font-size:18px; margin-bottom:6px;">Postdoctoral Researcher</div>
+          <div style="font-size:14px; color:#aaaaaa;">University of California San Diego · PI: Prof. Karsten Zengler</div>
+        </div>
+      </div>
+
+      <div style="font-size:12px; letter-spacing:2px; text-transform:uppercase; color:#f2f0eb; margin:56px 0 8px;">Education</div>
+      <div style="display:flex; gap:32px; padding:28px 0; border-top:1px solid #322f2b; flex-wrap:wrap;">
+        <div style="flex:0 0 160px; font-size:13px; color:#6e6e6e;">Sep. 2017 – Jun. 2023</div>
+        <div style="flex:1 1 260px;">
+          <div style="font-family:'Spectral','Noto Serif SC',serif; font-size:18px; margin-bottom:6px;">Ph.D. in Soil Science</div>
+          <div style="font-size:14px; color:#aaaaaa;">Zhejiang University · Supervisors: Prof. Jianming Xu, Prof. Bin Ma</div>
+        </div>
+      </div>
+      <div style="display:flex; gap:32px; padding:28px 0; border-top:1px solid #322f2b; flex-wrap:wrap;">
+        <div style="flex:0 0 160px; font-size:13px; color:#6e6e6e;">Aug. 2013 – Jun. 2017</div>
+        <div style="flex:1 1 260px;">
+          <div style="font-family:'Spectral','Noto Serif SC',serif; font-size:18px; margin-bottom:6px;">B.S. in Agricultural Resources and Environment</div>
+          <div style="font-size:14px; color:#aaaaaa;">Zhejiang University</div>
+        </div>
+      </div>
+
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ isProjects }}">
+    <div style="max-width:1040px; margin:0 auto; padding:clamp(56px,10vw,100px) clamp(20px,5vw,32px) clamp(56px,10vw,100px);">
+      <div style="font-size:12px; letter-spacing:2px; text-transform:uppercase; color:#dc9a5c; margin-bottom:16px;">Research</div>
+      <h1 style="font-family:'Spectral','Noto Serif SC',serif; font-weight:400; font-size:clamp(32px,7vw,44px); margin:0 0 60px;">Projects</h1>
+
+      <div style="font-size:12px; letter-spacing:2px; text-transform:uppercase; color:#f2f0eb; margin-bottom:8px;">Ongoing projects</div>
+      <sc-for list="{{ ongoingProjects }}" as="proj" hint-placeholder-count="5">
+        <div style="display:flex; gap:32px; padding:32px 0; border-top:1px solid #322f2b; flex-wrap:wrap;">
+          <div style="flex:0 0 200px; height:140px; background:#242220; border-radius:4px; overflow:hidden;">
+            
+            <sc-if value="{{ proj.isTrp }}"><img src="assets/trp.webp" alt="" loading="lazy" style="width:200px; height:140px; object-fit:cover; display:block;"></sc-if>
+            <sc-if value="{{ proj.isRiboseq }}"><img src="assets/riboseq.svg" alt="" loading="lazy" style="width:200px; height:140px; object-fit:cover; display:block;"></sc-if>
+            <sc-if value="{{ proj.isEsbl }}"><img src="assets/esbl.webp" alt="" loading="lazy" style="width:200px; height:140px; object-fit:cover; display:block;"></sc-if>
+            <sc-if value="{{ proj.isEarthworm }}"><img src="assets/earthworm.webp" alt="" loading="lazy" style="width:200px; height:140px; object-fit:cover; display:block;"></sc-if>
+            <sc-if value="{{ proj.isCircadian }}"><img src="assets/circadian.webp" alt="" loading="lazy" style="width:200px; height:140px; object-fit:cover; display:block;"></sc-if>
+          
+          </div>
+          <div style="flex:1 1 300px; min-width:0;">
+            <h2 style="font-family:'Spectral','Noto Serif SC',serif; font-weight:400; font-size:24px; margin:0 0 12px;">{{ proj.title }}</h2>
+            <p style="font-size:15px; line-height:1.75; color:#cfcfcf; margin:0; max-width:720px;">{{ proj.desc }}</p>
+          </div>
+        </div>
+      </sc-for>
+
+      <div style="font-size:12px; letter-spacing:2px; text-transform:uppercase; color:#f2f0eb; margin:64px 0 8px;">Archived project</div>
+      <sc-for list="{{ archivedProjects }}" as="proj" hint-placeholder-count="1">
+        <div style="display:flex; gap:32px; padding:32px 0; border-top:1px solid #322f2b; flex-wrap:wrap;">
+          <div style="flex:0 0 200px; height:140px; background:#242220; border-radius:4px; overflow:hidden;">
+            <img src="assets/virus-prevalence.webp" alt="" loading="lazy" style="width:200px; height:140px; object-fit:cover; display:block;">
+          </div>
+          <div style="flex:1 1 300px; min-width:0;">
+            <h2 style="font-family:'Spectral','Noto Serif SC',serif; font-weight:400; font-size:24px; margin:0 0 12px;">{{ proj.title }}</h2>
+            <p style="font-size:15px; line-height:1.75; color:#cfcfcf; margin:0; max-width:720px;">{{ proj.desc }}</p>
+          </div>
+        </div>
+      </sc-for>
+
+      <div style="font-size:12px; letter-spacing:2px; text-transform:uppercase; color:#f2f0eb; margin:88px 0 28px;">Fun Projects</div>
+      <div style="background:#242220; border-radius:2px; padding:clamp(24px,5vw,44px); display:flex; gap:40px; align-items:center; flex-wrap:wrap;">
+        <div style="flex:0 0 200px;">
+          <svg sc-camel-view-box="0 0 200 140" width="200" height="140">
+            <g fill="none" stroke="#d8d2c8" stroke-width="1.2" stroke-opacity="0.85" stroke-linecap="round">
+              <path d="M14,70 L34,45 L54,70 L74,45 L90,70"></path>
+              <line x1="112" y1="90" x2="112" y2="50"></line>
+              <line x1="124" y1="98" x2="124" y2="42"></line>
+              <line x1="136" y1="82" x2="136" y2="58"></line>
+              <line x1="148" y1="104" x2="148" y2="36"></line>
+              <line x1="160" y1="88" x2="160" y2="52"></line>
+              <line x1="172" y1="78" x2="172" y2="62"></line>
+              <line x1="184" y1="94" x2="184" y2="46"></line>
+            </g>
+            <g fill="#d8d2c8" fill-opacity="0.9">
+              <circle cx="14" cy="70" r="2.6"></circle>
+              <circle cx="34" cy="45" r="2.6"></circle>
+              <circle cx="54" cy="70" r="2.6"></circle>
+              <circle cx="74" cy="45" r="2.6"></circle>
+              <circle cx="90" cy="70" r="3.2"></circle>
+            </g>
+            <g stroke="#d8d2c8" stroke-opacity="0.6" stroke-width="1" fill="none">
+              <path d="M28,20 l3,-5 M28,20 l5,-1"></path>
+              <path d="M170,24 l3,-5 M170,24 l5,-1"></path>
+            </g>
+          </svg>
+        </div>
+        <div style="flex:1 1 300px; min-width:0;">
+          <h2 style="font-family:'Spectral','Noto Serif SC',serif; font-weight:400; font-size:26px; margin:0 0 14px;">Protein Control — When Molecular Machinery Loses Control</h2>
+          <p style="font-size:15px; line-height:1.7; color:#cfcfcf; max-width:560px; margin:0 0 20px;">An experimental piece that translates the amino-acid frequencies of the E. coli RNA polymerase beta subunit into a post-punk composition in the register of Joy Division, built entirely with the Web Audio API — no samples, no external libraries.</p>
+          <a href="https://ti-me-lab.github.io/assets/protein-control.html" target="_blank" rel="noreferrer" style="display:inline-block; font-size:13px; letter-spacing:0.5px; padding:12px 22px; background:#f2f0eb; color:#211f1d; border-radius:2px;">Launch interactive experience →</a>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ isPublications }}">
+    <div style="max-width:900px; margin:0 auto; padding:clamp(56px,10vw,100px) clamp(20px,5vw,32px) clamp(56px,10vw,100px);">
+      <div style="font-size:12px; letter-spacing:2px; text-transform:uppercase; color:#dc9a5c; margin-bottom:16px;">2016 – present</div>
+      <h1 style="font-family:'Spectral','Noto Serif SC',serif; font-weight:400; font-size:clamp(32px,7vw,44px); margin:0 0 20px;">Publications</h1>
+      <a href="https://scholar.google.com/citations?user=5gkbqfcAAAAJ&amp;hl=en" target="_blank" rel="noreferrer" style="display:inline-block; font-size:13px; margin-bottom:44px;">View full profile on Google Scholar →</a>
+
+      <div style="display:flex; gap:24px; align-items:center; flex-wrap:wrap; padding-bottom:24px; border-bottom:1px solid #322f2b; margin-bottom:8px;">
+        <sc-raw-select value="{{ yearFilter }}" sc-camel-on-change="{{ setYearFilter }}" style="font-size:13px; padding:8px 10px; border:1px solid #322f2b; background:#242220; color:#f2f0eb;">
+          <option value="all">All years</option>
+          <sc-for list="{{ years }}" as="y" hint-placeholder-count="8">
+            <option value="{{ y }}">{{ y }}</option>
+          </sc-for>
+        </sc-raw-select>
+        <sc-raw-select value="{{ journalFilter }}" sc-camel-on-change="{{ setJournalFilter }}" style="font-size:13px; padding:8px 10px; border:1px solid #322f2b; background:#242220; color:#f2f0eb; max-width:280px;">
+          <option value="all">All journals</option>
+          <sc-for list="{{ journals }}" as="j" hint-placeholder-count="8">
+            <option value="{{ j }}">{{ j }}</option>
+          </sc-for>
+        </sc-raw-select>
+        <div style="font-size:13px; color:#6e6e6e; margin-left:auto;">{{ resultCount }} of {{ totalCount }}</div>
+      </div>
+
+      <sc-for list="{{ filteredPubs }}" as="pub" hint-placeholder-count="10">
+        <div style="display:flex; gap:20px; padding:22px 0; border-bottom:1px solid #2a2724;">
+          <div style="flex:0 0 32px; font-family:'Spectral','Noto Serif SC',serif; color:#f2f0eb; font-size:15px; padding-top:2px;">{{ pub.n }}</div>
+          <div style="flex:1 1 auto;">
+            <div style="font-size:13px; color:#aaaaaa; margin-bottom:6px; line-height:1.5;">
+              <sc-for list="{{ pub.authorParts }}" as="part" hint-placeholder-count="1">
+                <span style="font-weight:{{ part.weight }}; color:{{ part.color }};">{{ part.text }}</span>
+              </sc-for>
+            </div>
+            <sc-if value="{{ pub.link }}">
+              <a href="{{ pub.link }}" target="_blank" rel="noreferrer" style="font-family:'Spectral','Noto Serif SC',serif; font-size:17px; color:#f2f0eb; line-height:1.4;">{{ pub.title }}</a>
+            </sc-if>
+            <sc-if value="{{ pub.noLink }}">
+              <span style="font-family:'Spectral','Noto Serif SC',serif; font-size:17px; color:#f2f0eb; line-height:1.4;">{{ pub.title }}</span>
+            </sc-if>
+            <div style="font-size:13px; font-style:italic; color:#6e6e6e; margin-top:6px;">{{ pub.journal }}, {{ pub.year }}</div>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ isPipelines }}">
+    <div style="max-width:900px; margin:0 auto; padding:clamp(56px,10vw,100px) clamp(20px,5vw,32px) clamp(56px,10vw,100px);">
+      <div style="font-size:12px; letter-spacing:2px; text-transform:uppercase; color:#dc9a5c; margin-bottom:16px;">Notes</div>
+      <h1 style="font-family:'Spectral','Noto Serif SC',serif; font-weight:400; font-size:clamp(32px,7vw,44px); margin:0 0 56px;">Pipelines</h1>
+
+      <sc-for list="{{ posts }}" as="post" hint-placeholder-count="2">
+        <div style="padding:32px 0; border-top:1px solid #322f2b;">
+          <div style="font-size:13px; color:#6e6e6e; margin-bottom:8px;">{{ post.date }}</div>
+          <h3 style="font-family:'Spectral','Noto Serif SC',serif; font-weight:400; font-size:22px; margin:0 0 10px;">{{ post.title }}</h3>
+          <p style="font-size:15px; line-height:1.7; color:#cfcfcf; max-width:600px; margin:0 0 10px;">{{ post.desc }}</p>
+          <a href="{{ post.link }}" target="_blank" rel="noreferrer" style="font-size:13px;">Read →</a>
+        </div>
+      </sc-for>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ isContact }}">
+    <div style="position:relative; overflow:hidden;">
+      <svg sc-camel-view-box="0 0 640 640" style="position:absolute; top:-40px; right:-80px; width:44vw; max-width:540px; height:auto; opacity:0.5; pointer-events:none; transform:scaleY(-1);">
+        <g fill="none" stroke="#dc9a5c" stroke-width="1">
+          <path d="M110,90 C170,60 230,140 210,200 C190,260 280,250 320,310" stroke-opacity="0.45"></path>
+          <path d="M320,310 C360,360 320,420 380,460 C430,495 420,540 470,560" stroke-opacity="0.4"></path>
+          <path d="M210,200 C260,190 300,150 360,170 C410,188 440,150 500,160" stroke-opacity="0.3"></path>
+          <path d="M320,310 C380,300 430,330 480,300 C520,278 560,300 590,270" stroke-opacity="0.3"></path>
+          <path d="M110,90 C90,150 140,190 130,250" stroke-opacity="0.25"></path>
+        </g>
+        <g fill="#dc9a5c">
+          <circle cx="110" cy="90" r="5" opacity="0.7"></circle>
+          <circle cx="210" cy="200" r="8" opacity="0.55"></circle>
+          <circle cx="320" cy="310" r="10" opacity="0.6"></circle>
+          <circle cx="380" cy="460" r="6" opacity="0.5"></circle>
+          <circle cx="470" cy="560" r="7" opacity="0.55"></circle>
+          <circle cx="360" cy="170" r="5" opacity="0.4"></circle>
+          <circle cx="500" cy="160" r="4" opacity="0.35"></circle>
+          <circle cx="480" cy="300" r="5" opacity="0.4"></circle>
+          <circle cx="590" cy="270" r="4" opacity="0.35"></circle>
+          <circle cx="130" cy="250" r="4" opacity="0.35"></circle>
+        </g>
+      </svg>
+    <div style="position:relative; max-width:900px; margin:0 auto; padding:clamp(56px,12vw,120px) clamp(20px,5vw,32px) clamp(64px,12vw,140px);">
+      <div style="font-size:12px; letter-spacing:2px; text-transform:uppercase; color:#dc9a5c; margin-bottom:16px;">Get in touch</div>
+      <h1 style="font-family:'Spectral','Noto Serif SC',serif; font-weight:400; font-size:clamp(32px,7vw,44px); margin:0 0 48px;">Contact</h1>
+      <div style="display:flex; gap:48px; align-items:stretch; flex-wrap:wrap;">
+        <img src="https://github.com/SysMicro.png" alt="Kankan Zhao" style="width:160px; height:160px; flex-shrink:0; border-radius:50%; object-fit:cover; display:block;">
+        <div style="flex:1 1 300px; min-width:0; min-height:160px; display:flex; flex-direction:column; justify-content:space-between; gap:12px;">
+          <div style="font-family:'Spectral','Noto Serif SC',serif; font-size:26px; line-height:1; margin-top:-2px;">Kankan Zhao | 赵侃侃</div>
+          <div style="font-size:16px; line-height:1.3;"><a href="mailto:kaz026@health.ucsd.edu">kaz026@health.ucsd.edu</a></div>
+          <div style="font-size:14px; line-height:1.3; color:#6e6e6e;">UC San Diego · Department of Pediatrics · <a href="https://www.zenglerlab.com/" target="_blank" rel="noreferrer" style="color:#6e6e6e;">Zengler Lab</a></div>
+          <div style="display:flex; flex-wrap:wrap; gap:8px 28px; font-size:14px; line-height:1;">
+            <a href="https://www.linkedin.com/in/kankan-zhao-7044832a5/" target="_blank" rel="noreferrer">← LinkedIn</a>
+            <a href="https://x.com/kkzhao95" target="_blank" rel="noreferrer">← X</a>
+            <a href="https://bsky.app/profile/zhaokk.bsky.social" target="_blank" rel="noreferrer">← Bluesky</a>
+          </div>
+        </div>
+        <sc-if value="{{ hasMap }}">
+          <div ref="{{ counterRef }}" style="display:none;"></div>
+        </sc-if>
+      </div>
+    </div>
+    </div>
+  </sc-if>
+
+  <div style="border-top:1px solid #322f2b; padding:32px; text-align:center; font-size:12px; color:#6e6e6e;">© Kankan Zhao {{ year }}</div>
+
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script="" data-props="{&quot;mapEmbed&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;//mapmyvisitors.com/map.js?d=tTyqqcF3xQ_qbjemIdg7NJNlYJlMglcgvqIffStonRk&amp;cl=211f1d&amp;w=a&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Visitors&quot;},&quot;countVisitors&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Visitors&quot;}}">
+
+var PUBLICATIONS = [
+{n:35, authors:"K Zhao, Y Wang, R Xue", title:"Lineage sorting inflates cross-environment functional enrichment", link:"https://doi.org/10.64898/2026.08.04.742871", journalName:"bioRxiv", journal:"bioRxiv", year:2026, cited:""},
+{n:34, authors:"S Cheng, Z Dai, D He, R Xue, K Zhao, JL Rodrigues, LW Mendes, SX Chang, J Xu", title:"Long-term N fertilization altered viral community composition and increased functional potentials of phosphorus cycling by causing soil acidification", link:"", journalName:"Soil Biology and Biochemistry", journal:"Soil Biology and Biochemistry, 110137", year:2026, cited:"2"},
+{n:33, authors:"X Song, Y Wang, Y Wang, K Zhao, D Tong, R Gao, X Lv, D Kong, Y Ruan, ...", title:"Rhizosphere-triggered viral lysogeny mediates microbial metabolic reprogramming to enhance arsenic oxidation", link:"https://www.nature.com/articles/s41467-025-58695-5", journalName:"Nature Communications", journal:"Nature Communications 16 (1), 4048", year:2025, cited:"27"},
+{n:32, authors:"D He, Z Dai, S Cheng, H Shen, J Lin, K Zhao, JLM Rodrigues, Y Kuzyakov, ...", title:"Microbial life-history strategies and genomic traits between pristine and cropland soils", link:"https://journals.asm.org/doi/full/10.1128/msystems.00178-25", journalName:"mSystems", journal:"mSystems 10 (5), e00178-25", year:2025, cited:"23"},
+{n:31, authors:"C Ding, Y Liu, M Hernández, H Sun, S Jiao, H Pan, T Ge, K Zhao, ...", title:"Coupling soil bacterial and fungal community traits to multifunctionality in grassland ecosystem", link:"https://www.sciencedirect.com/science/article/abs/pii/S016788092500180X", journalName:"Agriculture, Ecosystems & Environment", journal:"Agriculture, Ecosystems & Environment 388, 109648", year:2025, cited:"8"},
+{n:30, authors:"J He, J Xiao, X Shen, K Zhao, X Lei, H Zhang, C Sun, H Lu, Y Shao", title:"Multi-Habitat Landscape Promotes Microbial Diversity: Insights from the Traditional Agricultural Heritage and the Global Trend", link:"https://advanced.onlinelibrary.wiley.com/doi/full/10.1002/advs.202506402", journalName:"Advanced Science", journal:"Advanced Science 12 (46), e06402", year:2025, cited:"4"},
+{n:29, authors:"W Li, Y Wang, K Zhao, L Xu, T Shi, B Ma, X Lv", title:"Host-virus coevolution drives soil microbial function succession along a millennium land reclamation chronosequence", link:"https://www.sciencedirect.com/science/article/pii/S2090123224002583", journalName:"Journal of Advanced Research", journal:"Journal of Advanced Research 71, 297-306", year:2025, cited:"3"},
+{n:28, authors:"K Zhao, Y Wang, R Xue, X Liu, B Ma, J Xu", title:"Agriculture increases potential health risks of vertebrate viruses in soils", link:"https://onlinelibrary.wiley.com/doi/full/10.1002/imt2.70034", journalName:"iMeta", journal:"iMeta 4 (3), e70034", year:2025, cited:"2"},
+{n:27, authors:"R Xue, Z Li, W Qin, Y Wang, K Zhao, L Liu, Y Bai", title:"Prolonged grazing reduces the diversity and weakens virus-host links of metagenome-assembled viral community in acidic karst soil", link:"", journalName:"BMC Biology", journal:"BMC Biology 24 (1), 15", year:2025, cited:"1"},
+{n:26, authors:"C Li, MR Gillings, C Zhang, Q Chen, D Zhu, J Wang, K Zhao, Q Xu, ...", title:"Ecology and risks of the global plastisphere as a newly expanding microbial habitat", link:"https://www.cell.com/the-innovation/fulltext/S2666-6758(23)00171-6", journalName:"The Innovation", journal:"The Innovation 5 (1)", year:2024, cited:"174"},
+{n:25, authors:"B Ma, Y Wang, K Zhao, E Stirling, X Lv, Y Yu, L Hu, C Tang, C Wu, B Dong, ...", title:"Biogeographic patterns and drivers of soil viromes", link:"https://www.nature.com/articles/s41559-024-02347-2", journalName:"Nature Ecology & Evolution", journal:"Nature Ecology & Evolution 8 (4), 717-728", year:2024, cited:"113"},
+{n:24, authors:"Y Liu, K Zhao, E Stirling, X Wang, Z Gao, B Ma, C Xu, S Chen, G Chu, ...", title:"Heterosis of endophytic microbiomes in hybrid rice varieties improves seed germination", link:"https://journals.asm.org/doi/full/10.1128/msystems.00004-24", journalName:"mSystems", journal:"mSystems 9 (5), e00004-24", year:2024, cited:"22"},
+{n:23, authors:"C Ding, Y Liu, MG Dumont, H Pan, K Zhao, Y Li, Q Zhang, Y Luo, S Jiao, ...", title:"Mean annual precipitation modulates the assembly of high-affinity methanotroph communities and methane oxidation activity across grasslands", link:"https://www.sciencedirect.com/science/article/abs/pii/S0167880923004553", journalName:"Agriculture, Ecosystems & Environment", journal:"Agriculture, Ecosystems & Environment 360, 108796", year:2024, cited:"15"},
+{n:22, authors:"X Wang, J Lin, X Peng, Y Zhao, H Yu, K Zhao, A Barberán, Y Kuzyakov, ...", title:"Microbial rrn copy number is associated with soil C:N ratio and pH under long-term fertilization", link:"https://www.sciencedirect.com/science/article/abs/pii/S0048969724068311", journalName:"Science of the Total Environment", journal:"Science of the Total Environment 954, 176675", year:2024, cited:"12"},
+{n:21, authors:"Y Wang, Y Wang, S Ma, K Zhao, F Ding, X Liu", title:"Exploring metal (loid) s dynamics and bacterial community shifts in contaminated paddy soil: Impact of MgO-laden biochar under different water conditions", link:"https://www.sciencedirect.com/science/article/abs/pii/S0269749124001301", journalName:"Environmental Pollution", journal:"Environmental Pollution 345, 123416", year:2024, cited:"11"},
+{n:20, authors:"S Zhang, J Sun, Q Zhou, X Feng, J Yang, K Zhao, A Zhang, S Zhang, ...", title:"Microplastic contamination in Chinese topsoil from 1980 to 2050", link:"https://www.sciencedirect.com/science/article/abs/pii/S004896972407075X", journalName:"Science of the Total Environment", journal:"Science of the Total Environment 955, 176918", year:2024, cited:"8"},
+{n:19, authors:"R Xue, E Stirling, K Zhao, Y Wang, S Ye, J Xu, B Ma", title:"Putting cell size into perspective: Soil bacterial diversity and predictive function", link:"https://www.sciencedirect.com/science/article/pii/S0016706124000338", journalName:"Geoderma", journal:"Geoderma 443, 116804", year:2024, cited:"6"},
+{n:18, authors:"E Asiedu, K Zhao, MN Anwar, M Ross, A Balaberda, AC Ulrich", title:"Biodegradation in oil sands process-affected water: A comprehensive laboratory analysis of the in situ biodegradation of dissolved organic acids", link:"https://www.sciencedirect.com/science/article/abs/pii/S0045653523032885", journalName:"Chemosphere", journal:"Chemosphere 349, 141018", year:2024, cited:"5"},
+{n:17, authors:"B Ma, C Lu, Y Wang, J Yu, K Zhao, R Xue, H Ren, X Lv, R Pan, J Zhang, ...", title:"A genomic catalogue of soil microbiomes boosts mining of biodiversity and genetic resources", link:"https://www.nature.com/articles/s41467-023-43000-z", journalName:"Nature Communications", journal:"Nature Communications 14 (1), 7318", year:2023, cited:"209"},
+{n:16, authors:"B Wang, J Xu, Y Wang, E Stirling, K Zhao, C Lu, X Tan, D Kong, Q Yan, ...", title:"Tackling soil ARG-carrying pathogens with global-scale metagenomics", link:"https://advanced.onlinelibrary.wiley.com/doi/full/10.1002/advs.202301980", journalName:"Advanced Science", journal:"Advanced Science 10 (26), 2301980", year:2023, cited:"66"},
+{n:15, authors:"J Yuan, K Zhao, X Tan, R Xue, Y Zeng, C Ratti, P Trivedi", title:"Perspective on the development of synthetic microbial community (SynCom) biosensors", link:"https://www.cell.com/trends/biotechnology/abstract/S0167-7799(23)00128-2", journalName:"Trends in Biotechnology", journal:"Trends in Biotechnology 41 (10), 1227-1236", year:2023, cited:"39"},
+{n:14, authors:"R Xue, S Liu, E Stirling, Y Wang, K Zhao, H Matsumoto, M Wang, J Xu, ...", title:"Core community drives phyllosphere bacterial diversity and function in multiple ecosystems", link:"https://www.sciencedirect.com/science/article/abs/pii/S004896972303810X", journalName:"Science of the Total Environment", journal:"Science of The Total Environment 896, 165187", year:2023, cited:"19"},
+{n:13, authors:"Y Shen, HE Laue, MJ Shrubsole, H Wu, TR Bloomquist, A Larouche, ...", title:"Associations of childhood and perinatal blood metals with children's gut microbiomes in a Canadian gestation cohort", link:"https://ehp.niehs.nih.gov/doi/full/10.1289/EHP9674", journalName:"Environmental Health Perspectives", journal:"Environmental Health Perspectives 130 (1), 017007", year:2022, cited:"45"},
+{n:12, authors:"C Dai, H Wu, X Wang, K Zhao, Z Lu", title:"Network and meta-omics reveal the cooperation patterns and mechanisms in an efficient 1, 4-dioxane-degrading microbial consortium", link:"https://www.sciencedirect.com/science/article/abs/pii/S0045653522012164", journalName:"Chemosphere", journal:"Chemosphere 301, 134723", year:2022, cited:"31"},
+{n:11, authors:"X Song, Y Li, E Stirling, K Zhao, B Wang, Y Zhu, Y Luo, J Xu, B Ma", title:"AsgeneDB: a curated orthology arsenic metabolism gene database and computational tool for metagenome annotation", link:"https://academic.oup.com/nargab/article/4/4/lqac080/6786001", journalName:"NAR Genomics and Bioinformatics", journal:"NAR Genomics and Bioinformatics 4 (4), lqac080", year:2022, cited:"28"},
+{n:10, authors:"K Zhao, H Yu, R Xue, E Stirling, Y Wang, J Xu, B Ma", title:"The only constant is change: endogenous circadian rhythms of soil microbial activities", link:"https://www.sciencedirect.com/science/article/abs/pii/S0038071722002620", journalName:"Soil Biology and Biochemistry", journal:"Soil Biology and Biochemistry 173, 108805", year:2022, cited:"13"},
+{n:9, authors:"B Ma, E Stirling, Y Liu, K Zhao, J Zhou, BK Singh, C Tang, RA Dahlgren, ...", title:"Soil biogeochemical cycle couplings inferred from a function-taxon network", link:"https://spj.science.org/doi/full/10.34133/2021/7102769", journalName:"Research", journal:"Research", year:2021, cited:"99"},
+{n:8, authors:"K Zhao, B Ma, Y Xu, E Stirling, J Xu", title:"Light exposure mediates circadian rhythms of rhizosphere microbial communities", link:"", journalName:"The ISME Journal", journal:"The ISME Journal 15 (9), 2655-2664", year:2021, cited:"96"},
+{n:7, authors:"X Wang, H Wu, X Wang, H Wang, K Zhao, B Ma, Z Lu", title:"Network-directed isolation of the cooperator Pseudomonas aeruginosa ZM03 enhanced the dibutyl phthalate degradation capacity of Arthrobacter nicotianae ZM05 under pH stress", link:"https://www.sciencedirect.com/science/article/abs/pii/S0304389420326571", journalName:"Journal of Hazardous Materials", journal:"Journal of Hazardous Materials 410, 124667", year:2021, cited:"40"},
+{n:6, authors:"Y Liu, B Ma, W Chen, K Schlaeppi, M Erb, E Stirling, L Hu, E Wang, ...", title:"Rhizobium Symbiotic Capacity Shapes Root-Associated Microbiomes in Soybean", link:"https://www.frontiersin.org/journals/microbiology/articles/10.3389/fmicb.2021.709012/full", journalName:"Frontiers in Microbiology", journal:"Frontiers in Microbiology 12", year:2021, cited:"40"},
+{n:5, authors:"R Xue, K Zhao, X Yu, E Stirling, S Liu, S Ye, B Ma, J Xu", title:"Deciphering sample size effect on microbial biogeographic patterns and community assembly processes at centimeter scale", link:"https://www.sciencedirect.com/science/article/abs/pii/S0038071721000900", journalName:"Soil Biology and Biochemistry", journal:"Soil Biology and Biochemistry 156, 108218", year:2021, cited:"27"},
+{n:4, authors:"X Lv, K Zhao, R Xue, Y Liu, J Xu, B Ma", title:"Strengthening insights in microbial ecological networks from theory to applications", link:"https://journals.asm.org/doi/full/10.1128/msystems.00124-19", journalName:"mSystems", journal:"mSystems 4 (3)", year:2019, cited:"54*"},
+{n:3, authors:"B Ma, K Zhao, X Lv, W Su, Z Dai, JA Gilbert, PC Brookes, K Faust, J Xu", title:"Genetic correlation network prediction of forest soil microbial functional organization", link:"https://academic.oup.com/ismej/article/12/10/2492/7501442", journalName:"The ISME Journal", journal:"The ISME Journal 12 (10), 2492-2505", year:2018, cited:"100"},
+{n:2, authors:"X Lv, K Zhao, H Li, B Ma", title:"Niche partition of phenanthrene-degrading bacteria along a Phragmites australis rhizosphere gradient", link:"https://link.springer.com/article/10.1007/s00374-018-1287-4", journalName:"Biology and Fertility of Soils", journal:"Biology and Fertility of Soils 54 (5), 607-616", year:2018, cited:"11"},
+{n:1, authors:"CY Lai, LL Wen, LD Shi, K Zhao, YQ Wang, X Yang, BE Rittmann, ...", title:"Selenate and nitrate bioreductions using methane as the electron donor in a membrane biofilm reactor", link:"https://pubs.acs.org/doi/abs/10.1021/acs.est.6b02807", journalName:"Environmental science & technology", journal:"Environmental science & technology 50 (18), 10179-10186", year:2016, cited:"159"}
+];
+
+function splitAuthors(str) {
+  const names = ['Kankan Zhao', 'KK Zhao', 'K Zhao', 'Z Kankan'];
+  const re = new RegExp('(' + names.join('|') + ')');
+  return str.split(re).filter(s => s !== '').map(s => ({
+    text: s,
+    weight: names.includes(s) ? 600 : 400,
+    color: names.includes(s) ? '#f2f0eb' : '#aaaaaa'
+  }));
+}
+
+const DEFAULT_MAP_EMBED = '//mapmyvisitors.com/map.js?d=tTyqqcF3xQ_qbjemIdg7NJNlYJlMglcgvqIffStonRk&cl=211f1d&w=a';
+
+const VALID_PAGES = ['home', 'about', 'projects', 'publications', 'pipelines', 'contact'];
+
+class Component extends DCLogic {
+  state = {
+    page: (VALID_PAGES.includes((typeof window !== 'undefined' ? window.location.hash : '').slice(1)))
+      ? window.location.hash.slice(1) : 'home',
+    pubs: PUBLICATIONS,
+    yearFilter: 'all',
+    journalFilter: 'all'
+  };
+
+  componentDidMount() {
+    this._onHashChange = () => {
+      const h = window.location.hash.slice(1);
+      if (VALID_PAGES.includes(h) && h !== this.state.page) this.setState({ page: h });
+    };
+    window.addEventListener('hashchange', this._onHashChange);
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('hashchange', this._onHashChange);
+  }
+
+  // Invisible: the MapMyVisitors script that records the visit server-side.
+  // No map is rendered — this only keeps the archive accumulating.
+  mountCounter = (node) => {
+    if (!node || node.dataset.mapMounted) return;
+    const raw = (this.props.mapEmbed || DEFAULT_MAP_EMBED).trim();
+    if (!raw) return;
+    node.dataset.mapMounted = '1';
+    let src = raw;
+    const m = raw.match(/src\s*=\s*["']([^"']+)["']/i);
+    if (m) src = m[1];
+    else if (!/^https?:|^\/\//.test(raw)) src = '//mapmyvisitors.com/map.js?d=' + raw + '&cl=211f1d&w=a';
+    if (src.indexOf('//') === 0) src = 'https:' + src;
+    const s = document.createElement('script');
+    s.src = src;
+    s.async = true;
+    if (/mapmyvisitors\.com/.test(src)) s.id = 'mapmyvisitors';
+    if (/clustrmaps\.com\/globe\.js/.test(src)) s.id = 'clstr_globe';
+    node.appendChild(s);
+  };
+
+  setPage(p) {
+    this.setState({ page: p });
+    if (typeof window !== 'undefined') window.location.hash = p;
+  }
+
+  renderVals() {
+    const page = this.state.page;
+    const pubs = this.state.pubs;
+    const active = '#f2f0eb';
+    const inactive = '#6e6e6e';
+
+    const years = Array.from(new Set(pubs.map(p => p.year))).sort((a, b) => b - a);
+    const journals = Array.from(new Set(pubs.map(p => p.journalName))).sort();
+
+    const filteredPubs = pubs.filter(p =>
+      (this.state.yearFilter === 'all' || String(p.year) === String(this.state.yearFilter)) &&
+      (this.state.journalFilter === 'all' || p.journalName === this.state.journalFilter)
+    ).map(p => ({ ...p, noLink: !p.link, authorParts: splitAuthors(p.authors) }));
+
+    const ongoingProjects = [
+      { imgId: 'proj-trp', svg: 'trp', isTrp: true, imgPad: 0, title: 'Translational resource partitioning (TRP)', desc: 'Genomic surveys describe what microbial communities can do, not what they are actually doing right now, and that gap matters because ribosomes are finite: how a community allocates them is where ecological strategy shows up. Using metaRiboSeq, a platform for community-scale ribosome profiling, this project measures translational investment across distinct ecosystems spanning soil, marine, and host-associated systems, finding that communities partition their translational investment along a divergence axis rather than averaging it, with niche divergence, not richness, dominating the structure. This recasts community structure as resource allocation under proteome constraint, linking ecology to quantitative cell physiology, and the same logic extends down to viruses: prophages, viral genomes integrated into bacterial chromosomes, reallocate their own translational resources in step with the surrounding community, showing that the resource allocation framework shaping free living microbes also governs an integrated virus riding along inside them.' },
+      { imgId: 'proj-riboseq', svg: 'riboseq', isRiboseq: true, imgPad: 24, title: 'Cross-system atlas of RiboSeq-validated small proteins', desc: 'Small proteins are among the most systematically overlooked parts of microbial genomes: too short to be reliably annotated, they are routinely discarded by standard gene finding pipelines. This project repurposes existing metagenomic ribosome profiling data to ask which of them are actually being translated. Across different microbiomes, spanning the infant and adult gut, the vaginal tract, tomato rhizosphere, marine water, and soil, it recovers 1.6 million translation supported small ORFs, collapsing into 716,000 protein families. The picture that emerges is one of near total novelty and near total locality: 93% of these families are absent from GMSC, the largest existing small protein catalog, and 91% occur in just a single system. Homology based annotation reaches only a sixth of them, and essentially none of the shortest ones.' },
+      { imgId: 'proj-esbl', svg: 'esbl', isEsbl: true, imgPad: 0, title: 'Leveraging microbial competition to fight intestinal multidrug-resistant infections', desc: 'ESBL-producing Enterobacteriaceae are a critical public health threat, and current treatments rely on antibiotics that only accelerate resistance. This project applies the Microbial Interaction and Niche Determination (MIND) framework to fecal samples from ESBL-colonized patients, combining metagenomics, metatranscriptomics, and metaRiboSeq to identify natural competitors of ESBL-producing E. coli based on translational resource allocation. Classifying gut microbes by translational efficiency identified patient-specific competitors, most consistently Streptococcus, Citrobacter, Enterobacter, and Bifidobacterium, and pointed to substrates, starch and C4-dicarboxylates, that favor these competitors over the pathogen. In vitro validation confirmed both effects and the work is now moving into a small human trial as a competition-based, antibiotic-free intervention.' },
+      { imgId: 'proj-earthworm', svg: 'earthworm', isEarthworm: true, imgPad: 0, title: 'A space odyssey of global earthworm expansion', desc: "Soil organisms sustain the nutrient cycling and fertility that land life and agriculture depend on, yet almost nothing is known about how their diversity has changed over time. Using earthworms as a sentinel for soil fauna, this project builds machine learning models that predict diversity from land use, population, climate, and soil rather than geographic position, reconstructing global richness, abundance, and biomass at decadal resolution from 1850 and projecting them to 2100 under four socioeconomic pathways. The past century's rise in abundance and biomass came almost entirely from farmland expansion rather than richer soils, a fragile gain since per area densities actually fell as cultivation spread onto marginal land. Looking forward, climate replaces land use as the dominant control: warming raises richness but reduces biomass, pulling the two apart." },
+      { imgId: 'proj-circadian', svg: 'circadian', isCircadian: true, imgPad: 0, title: 'Circadian rhythms of microbial community in rice rhizosphere', desc: "Rice rhizosphere microbial communities keep circadian time, set mainly by light driven daily fluctuations in the plant's environment, but what that rhythm actually does to biogeochemical cycling in the soil around the roots was largely unknown. This project tracked diel changes in rhizosphere bacteria, archaea, and viruses using paired metagenome, metatranscriptome, metabolome, and transcriptome data from greenhouse and field settings. Three mechanisms turned out to regulate these rhythms: the microbes' own circadian clock genes, the daily swings of the external environment, and the daily dynamics of the viruses infecting them, establishing that a circadian lens is essential for understanding rhizosphere assembly, virus host interactions, and ecosystem function." }
+    ];
+
+    const archivedProjects = [
+      { imgId: 'proj-virusprevalence', imgPad: 0, title: 'Global prevalence of vertebrate viruses in soils', desc: 'Soil is not usually where public health surveillance looks for vertebrate viruses, but it may be an important blind spot. This project screened 3,049 soil metagenome and 1,441 soil metatranscriptome samples from global datasets against a manually curated database of vertebrate viruses, comparing agricultural and natural soils. Agricultural soils showed consistently higher detection rates and richness of vertebrate viruses, a pattern that points to elevated potential health risks tied to farming activity, offering a new One Health angle on agricultural expansion and intensification.' }
+    ];
+
+    const posts = [
+      { date: 'December 15, 2021', title: 'Metagenomics pipeline', desc: 'A step-by-step, assembly-based pipeline for metagenomic analysis of environmental samples, from quality control through virus prediction.', link: 'https://ti-me-lab.github.io/posts' }
+    ];
+
+    return {
+      isHome: page === 'home', isAbout: page === 'about', isProjects: page === 'projects', isPublications: page === 'publications',
+      isPipelines: page === 'pipelines', isContact: page === 'contact',
+      homeColor: page === 'home' ? active : inactive,
+      aboutColor: page === 'about' ? active : inactive,
+      projectsColor: page === 'projects' ? active : inactive,
+      publicationsColor: page === 'publications' ? active : inactive,
+      pipelinesColor: page === 'pipelines' ? active : inactive,
+      contactColor: page === 'contact' ? active : inactive,
+      navHome: e => { e.preventDefault(); this.setPage('home'); },
+      navAbout: e => { e.preventDefault(); this.setPage('about'); },
+      navProjects: e => { e.preventDefault(); this.setPage('projects'); },
+      navPublications: e => { e.preventDefault(); this.setPage('publications'); },
+      navPipelines: e => { e.preventDefault(); this.setPage('pipelines'); },
+      navContact: e => { e.preventDefault(); this.setPage('contact'); },
+      goHome: () => this.setPage('home'),
+      ongoingProjects, archivedProjects, posts,
+      years, journals,
+      yearFilter: this.state.yearFilter,
+      journalFilter: this.state.journalFilter,
+      setYearFilter: e => this.setState({ yearFilter: e.target.value }),
+      setJournalFilter: e => this.setState({ journalFilter: e.target.value }),
+      filteredPubs, resultCount: filteredPubs.length, totalCount: pubs.length,
+      year: new Date().getFullYear(),
+      hasMap: this.props.countVisitors !== false && !!(this.props.mapEmbed || DEFAULT_MAP_EMBED).trim(),
+      noMap: !(this.props.mapEmbed || DEFAULT_MAP_EMBED).trim(),
+      counterRef: this.mountCounter
+    };
+  }
+}
+
+
+</script>
+
+
+</body></html>
